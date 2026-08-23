@@ -3,10 +3,10 @@
 ゴールド(XAU/USD)とドル円(USD/JPY)を対象に、実際の価格データを使って「勝てるパターン」を
 感覚ではなく数値で検証するためのバックテストツールキット。
 
-**結論(詳細は `reports/analysis_report.md`)**: 検証した4つの機械的パターンのうち、統計的に
-意味のある取引数(15件以上)かつプラス期待値だったのは **ゴールド日足のドンチアン・ブレイクアウト
-(勝率55.6%, 期待値+0.667R)** のみ。ドル円はこの4パターンでは優位性を確認できなかった。
-「月100万円」を狙うために必要な資金規模の試算も含む。
+**結論(詳細は `reports/analysis_report.md`)**: 日足・1時間足・15分足・5分足でバックテストした結果、
+**ゴールドのドンチアン・ブレイクアウトが唯一、全時間足で一貫してスプレッドコスト差引後もプラスの
+実質期待値**を示した。ドル円はこの4パターン・4時間足いずれでも優位性を確認できなかった。少額運用
+からの現実的な資金計画・ロットサイズの決め方も含む。
 
 ## セットアップ
 
@@ -19,14 +19,17 @@ pip install -r requirements.txt
 ```bash
 cd src
 
-# 1. データ取得（Yahoo Financeから日足2年 + 1時間足60日をdata/にCSVキャッシュ）
+# 1. データ取得（Yahoo Financeから日足2年 + 1時間足/15分足/5分足60〜70日をdata/にCSVキャッシュ）
 python3 data_fetch.py
 
 # 2. 全戦略×全銘柄×全時間足のバックテストを実行し、reports/backtest_results.csv に保存
 python3 run_analysis.py
 
-# 3. 見つかった優位性を使い、月100万円を狙うために必要な口座資金・リスク量を試算
-python3 position_sizing.py --trades-per-month 22.5 --expectancy-r 0.306
+# 3. スプレッドコストを差し引いた実質期待値を算出し、reports/cost_adjusted_results.csv に保存
+python3 cost_sensitivity.py
+
+# 4. 見つかった優位性を使い、月100万円を狙うために必要な口座資金・リスク量を試算
+python3 position_sizing.py --trades-per-month 19.6 --expectancy-r 0.294
 ```
 
 ## 構成
@@ -38,11 +41,13 @@ src/
   strategies.py        # 4つの売買パターン(トレンド押し目/ブレイクアウト/RSI逆張り/BB逆張り)
   backtest.py           # ATRベースSL/TPの単純バックテストエンジン
   run_analysis.py         # 全組み合わせを実行し結果を集計
-  position_sizing.py        # 期待値から必要資金・リスク量を逆算
-data/                        # 取得したOHLCVデータのCSVキャッシュ
+  cost_sensitivity.py       # スプレッドコスト差引後の実質期待値を算出
+  position_sizing.py          # 期待値から必要資金・リスク量を逆算
+data/                          # 取得したOHLCVデータのCSVキャッシュ
 reports/
-  analysis_report.md          # 検証結果と月100万円に向けたトレード計画
-  backtest_results.csv         # 全16パターンの生の指標
+  analysis_report.md            # 検証結果と少額運用〜月100万円に向けたトレード計画
+  backtest_results.csv           # 全32パターンの生の指標
+  cost_adjusted_results.csv       # スプレッドコスト差引後の実質期待値
 ```
 
 ## 免責事項

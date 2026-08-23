@@ -74,3 +74,5 @@ if __name__ == "__main__":
     for key in SYMBOLS:
         fetch_and_cache(key, range_="2y", interval="1d")
         fetch_and_cache(key, range_="60d", interval="1h")
+        fetch_and_cache(key, range_="60d", interval="15m")
+        fetch_and_cache(key, range_="60d", interval="5m")

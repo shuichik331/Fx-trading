@@ -17,8 +17,12 @@ REPORTS_DIR.mkdir(exist_ok=True)
 DATASETS = {
     ("usdjpy", "1d"): "usdjpy_1d.csv",
     ("usdjpy", "1h"): "usdjpy_1h.csv",
+    ("usdjpy", "15m"): "usdjpy_15m.csv",
+    ("usdjpy", "5m"): "usdjpy_5m.csv",
     ("gold", "1d"): "gold_1d.csv",
     ("gold", "1h"): "gold_1h.csv",
+    ("gold", "15m"): "gold_15m.csv",
+    ("gold", "5m"): "gold_5m.csv",
 }
 
 
