@@ -1,0 +1,3 @@
+pattern,baseline_n,baseline_trades_per_month,baseline_expectancy_r,baseline_ev_r_per_month,filtered_n,filtered_trades_per_month,filtered_expectancy_r,filtered_ev_r_per_month
+Pattern A: Gold 15m Donchian Breakout,198,86.10171428571428,0.16017742634686669,13.791550998338959,129,56.09657142857143,0.17751305179883958,9.957873589737305
+Pattern B: Gold 5m RSI Mean-Reversion,38,16.524571428571427,0.37911542628832323,6.264719941374703,27,11.741142857142856,0.15872299193844822,1.8635893230624545

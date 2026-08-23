@@ -45,6 +45,9 @@ python3 position_sizing.py --target 100000 --trades-per-month 86.1 --expectancy-
 # 5. マクロバイアス(実質金利/DXY)フィルターが実際に効果あるか検証し、reports/fundamentals_filter_results.csv に保存
 python3 fundamentals_filter_backtest.py
 
+# 5b. 1時間足トレンドフィルター(純粋にテクニカル)が効果あるか検証し、reports/technical_filter_results.csv に保存
+python3 technical_filter_backtest.py
+
 # 6. 今この瞬間、採用中の2パターン(ゴールド15分足/5分足)の条件に当てはまっているか
 #    ＋マクロバイアス・米国指標発表の有無をあわせてチェック
 python3 signal_scanner.py
@@ -63,6 +66,7 @@ src/
   position_sizing.py          # 期待値から必要資金・リスク量を逆算
   fundamentals.py                # 実質金利/DXYマクロバイアス・米国指標カレンダー取得
   fundamentals_filter_backtest.py  # マクロバイアスをフィルターとして使った場合の効果を検証
+  technical_filter_backtest.py       # 1時間足トレンドフィルターの効果を検証
   signal_scanner.py                  # 採用中の2パターン成立有無＋ファンダメンタルズ状況をチェック
 data/                                # 取得したOHLCVデータのCSVキャッシュ
 reports/
@@ -71,6 +75,7 @@ reports/
   cost_adjusted_results.csv             # スプレッドコスト差引後の実質期待値
   trading_plan.md                        # 15分足・5分足限定・月10万円目標の実践プラン
   fundamentals_filter_results.csv         # マクロバイアスフィルター適用前後の比較
+  technical_filter_results.csv             # 1時間足トレンドフィルター適用前後の比較
 ```
 
 ## 免責事項
