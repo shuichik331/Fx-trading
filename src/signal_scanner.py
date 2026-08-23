@@ -23,11 +23,18 @@ import sys
 import pandas as pd
 
 from data_fetch import fetch
+from fundamentals import (
+    fetch_dxy,
+    fetch_real_yield,
+    high_impact_usd_events_near_now,
+    macro_bias,
+)
 from indicators import atr, ema, rsi
 from strategies import donchian_breakout, rsi_mean_reversion
 
 STOP_ATR = 1.5
 REWARD_ATR = 3.0
+NEWS_BUFFER_HOURS = 1.0  # avoid new entries within this many hours of high-impact USD releases
 
 
 def check_pattern_a(df_15m: pd.DataFrame) -> dict | None:
@@ -78,6 +85,41 @@ def check_pattern_b(df_5m: pd.DataFrame) -> dict | None:
     }
 
 
+def print_fundamentals_context() -> bool:
+    """Print macro bias (informational) and news-blackout warnings.
+
+    Returns True if a new entry should be avoided right now (high-impact
+    USD release within NEWS_BUFFER_HOURS either side).
+    """
+    print("\n--- ファンダメンタルズ・コンテキスト ---")
+    try:
+        ry = fetch_real_yield(start="2026-06-01")
+        dxy = fetch_dxy(range_="3mo")
+        bias = macro_bias(ry, dxy, window=20)
+        latest_bias = int(bias.dropna().iloc[-1]) if not bias.dropna().empty else 0
+        label = {1: "強気(ゴールド追い風)", -1: "弱気(ゴールド逆風)", 0: "中立"}[latest_bias]
+        print(f"  マクロバイアス: {label}")
+        print("  ※ 検証の結果、このバイアスを方向フィルターとして使っても勝率・期待値は改善しなかった"
+              "（reports/fundamentals_filter_results.csv）。あくまで参考情報として見ること。")
+    except Exception as e:  # noqa: BLE001
+        print(f"  マクロデータ取得失敗: {e}")
+
+    avoid = False
+    try:
+        near = high_impact_usd_events_near_now(before_hours=NEWS_BUFFER_HOURS, after_hours=NEWS_BUFFER_HOURS)
+        if near is not None and not near.empty:
+            avoid = True
+            print(f"  ⚠ 米国ハイインパクト指標が前後{NEWS_BUFFER_HOURS}時間以内にあり。新規エントリーは見送り推奨:")
+            for _, row in near.iterrows():
+                print(f"      {row['date']}  {row['title']}  (予想:{row['forecast']} 前回:{row['previous']})")
+        else:
+            print("  直近の米国ハイインパクト指標: なし（新規エントリーの妨げなし）")
+    except Exception as e:  # noqa: BLE001
+        print(f"  経済指標カレンダー取得失敗: {e}")
+
+    return avoid
+
+
 def main() -> None:
     print("最新データを取得中...")
     df_15m = fetch("gold", range_="1mo", interval="15m")
@@ -91,6 +133,8 @@ def main() -> None:
     if b_hit:
         hits.append(b_hit)
 
+    avoid_new_entries = print_fundamentals_context()
+
     if not hits:
         print("\n現在、パターンA・Bとも条件成立なし。待機。")
         print(f"  直近15分足終値: {df_15m['close'].iloc[-1]:.2f} ({df_15m.index[-1]})")
@@ -103,6 +147,8 @@ def main() -> None:
             if k == "pattern":
                 continue
             print(f"    {k}: {v}")
+        if avoid_new_entries:
+            print("    ⚠ 上記の指標発表が近いため、条件成立していても今回は見送り推奨")
         print("    ※ 必ずリスク管理ルール(1トレード1〜2%)に従ってロットサイズを決めること")
 
 

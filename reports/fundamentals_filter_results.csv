@@ -1,0 +1,3 @@
+pattern,baseline_n,baseline_winrate,baseline_expectancy_r,filtered_n,filtered_winrate,filtered_expectancy_r,expectancy_delta
+Pattern A: Gold 15m Donchian Breakout,198,0.41414141414141414,0.16017742634686669,187,0.40641711229946526,0.1458712348619509,-0.014306191484915798
+Pattern B: Gold 5m RSI Mean-Reversion,38,0.5263157894736842,0.37911542628832323,36,0.5,0.28906628330433976,-0.09004914298398348
