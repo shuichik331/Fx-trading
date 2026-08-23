@@ -8,6 +8,11 @@
 実質期待値**を示した。ドル円はこの4パターン・4時間足いずれでも優位性を確認できなかった。少額運用
 からの現実的な資金計画・ロットサイズの決め方も含む。
 
+**15分足・5分足のみで取引する場合**は `reports/trading_plan.md` を参照。ゴールドの2パターン
+（15分足ドンチアン・ブレイクアウト／5分足RSI逆張り）に絞り込み、月10万円目標に必要な資金と
+運用ルールをまとめてある。`src/signal_scanner.py` で「今この瞬間、条件に当てはまっているか」を
+チェックできる。
+
 ## セットアップ
 
 ```bash
@@ -28,8 +33,11 @@ python3 run_analysis.py
 # 3. スプレッドコストを差し引いた実質期待値を算出し、reports/cost_adjusted_results.csv に保存
 python3 cost_sensitivity.py
 
-# 4. 見つかった優位性を使い、月100万円を狙うために必要な口座資金・リスク量を試算
-python3 position_sizing.py --trades-per-month 19.6 --expectancy-r 0.294
+# 4. 見つかった優位性を使い、目標月間利益を狙うために必要な口座資金・リスク量を試算
+python3 position_sizing.py --target 100000 --trades-per-month 86.1 --expectancy-r 0.135
+
+# 5. 今この瞬間、採用中の2パターン(ゴールド15分足/5分足)の条件に当てはまっているかチェック
+python3 signal_scanner.py
 ```
 
 ## 構成
@@ -43,11 +51,13 @@ src/
   run_analysis.py         # 全組み合わせを実行し結果を集計
   cost_sensitivity.py       # スプレッドコスト差引後の実質期待値を算出
   position_sizing.py          # 期待値から必要資金・リスク量を逆算
-data/                          # 取得したOHLCVデータのCSVキャッシュ
+  signal_scanner.py             # 採用中の2パターンが今成立しているかをチェック
+data/                            # 取得したOHLCVデータのCSVキャッシュ
 reports/
-  analysis_report.md            # 検証結果と少額運用〜月100万円に向けたトレード計画
-  backtest_results.csv           # 全32パターンの生の指標
-  cost_adjusted_results.csv       # スプレッドコスト差引後の実質期待値
+  analysis_report.md              # 検証結果と少額運用〜月100万円に向けたトレード計画
+  backtest_results.csv             # 全32パターンの生の指標
+  cost_adjusted_results.csv         # スプレッドコスト差引後の実質期待値
+  trading_plan.md                    # 15分足・5分足限定・月10万円目標の実践プラン
 ```
 
 ## 免責事項
