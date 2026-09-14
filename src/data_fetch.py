@@ -70,9 +70,22 @@ def fetch_and_cache(symbol_key: str, range_: str, interval: str) -> pd.DataFrame
     return df
 
 
+def fetch_and_cache_long_1h(symbol_key: str) -> pd.DataFrame:
+    """Yahoo serves up to 730 days of hourly bars - far more regimes than the
+    60-day cap on 15m/5m data, so this is the longest intraday history we can
+    validate a pattern against. Saved separately from the 60d 1h file.
+    """
+    out = DATA_DIR / f"{symbol_key}_1h_730d.csv"
+    df = fetch(symbol_key, range_="730d", interval="1h")
+    df.to_csv(out)
+    print(f"saved {out} ({len(df)} rows, {df.index.min()} -> {df.index.max()})")
+    return df
+
+
 if __name__ == "__main__":
     for key in SYMBOLS:
         fetch_and_cache(key, range_="2y", interval="1d")
         fetch_and_cache(key, range_="60d", interval="1h")
         fetch_and_cache(key, range_="60d", interval="15m")
         fetch_and_cache(key, range_="60d", interval="5m")
+        fetch_and_cache_long_1h(key)

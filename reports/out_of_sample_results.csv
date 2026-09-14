@@ -1,0 +1,3 @@
+pattern,period,in_sample_n,in_sample_win_rate,in_sample_expectancy_r,oos_n,oos_trades_per_month,oos_win_rate,oos_expectancy_r,oos_net_expectancy_r,oos_total_r,oos_net_total_r,expectancy_change
+Pattern A: Gold 15m Donchian Breakout,2026-08-21 -> 2026-09-14,198,0.414,0.16,64,84.70260869565217,0.390625,-0.06977022487543105,-0.09614375042207,-4.465294392027587,-6.15320002701248,-0.22977022487543106
+Pattern B: Gold 5m RSI Mean-Reversion,2026-08-21 -> 2026-09-14,38,0.526,0.379,12,15.881739130434783,0.25,-0.2500000000000045,-0.29702117869538325,-3.000000000000054,-3.564254144344599,-0.6290000000000044
