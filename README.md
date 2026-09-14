@@ -17,6 +17,11 @@
 - モンテカルロ（10,000パス）の結果、**リスクを上げても資金が増える確率は上がらない**
   （0.5%→71.7%、1%→70.7%、2%→66.4%）。増えるのは資金減少幅だけ。
 - ゴールドの往復スプレッドが**$1.58を超えると測定した優位性は完全に消滅**する。
+- 教科書的チャートパターン（ヘッド&ショルダー、ダブルトップ/ボトム）も機械化して検証したが、
+  **有意なものはゼロ**。ネックラインブレイクは構造的にブレイクアウト取引そのもので、期待値も
+  既存のドンチアン・ブレイクアウトとほぼ同水準（＝新しい優位性ではなく同じ傾向の測り直し）。
+  三角保ち合い・フラッグ・ペナント・ウェッジは、自由に動かせるパラメータが多すぎて730日分の
+  データでは正直に検証できないため実装していない（理由は `src/chart_patterns.py` 冒頭に記載）。
 
 実運用プラン（1手法のみ・リスク0.5%・実弾投入前の合否ゲート）は `reports/trading_plan.md`。
 `reports/analysis_report.md` は改訂前の初期検証の記録として残してある。
@@ -87,6 +92,8 @@ src/
   long_history_validation.py           # 1時間足730日で信頼区間・パラメータ頑健性・四半期一貫性を検証
   out_of_sample_test.py                  # 選定後の新データだけで機能したかを検証
   montecarlo.py                            # リスク%別の増加確率・最大DD・必要な優位性を試算
+  chart_patterns.py                          # H&S・ダブルトップ/ボトムの機械的検出（先読みなし）
+  chart_pattern_validation.py                  # 上記パターンを信頼区間・頑健性つきで検証
   signal_scanner.py                  # 旧15分/5分パターンの成立有無＋ファンダメンタルズ状況をチェック
 data/
   insample_20260821/                 # 旧パターン選定時点のデータスナップショット（検証の再現用）
@@ -98,6 +105,8 @@ reports/
   parameter_robustness.csv                 # ドンチアン期間を変えた場合の結果
   quarterly_consistency.csv                 # 四半期ごとの一貫性
   montecarlo_results.csv                     # リスク%別の増加確率・DD確率
+  chart_pattern_results.csv                   # 教科書的チャートパターンの検証結果
+  chart_pattern_robustness.csv                 # 検出閾値を変えた場合の結果
   analysis_report.md                          # 改訂前の初期検証の記録（結論は上記に置き換え済み）
   backtest_results.csv                         # 全32パターンの生の指標
   cost_adjusted_results.csv                     # スプレッドコスト差引後の実質期待値
