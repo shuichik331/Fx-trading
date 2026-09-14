@@ -71,9 +71,47 @@ def bollinger_reversion(df: pd.DataFrame, window: int = 20, num_std: float = 2.0
     return sig
 
 
+def ema_touch_continuation(df: pd.DataFrame, window: int = 20) -> pd.Series:
+    """"Buy the pullback to the EMA" - the rule from the viral X post:
+
+    1. Price confirms a cross of EMA(window) (close flips from below to above,
+       or above to below) -> establishes a trend "regime".
+    2. While in that regime, the first subsequent bar whose range touches the
+       EMA (low <= EMA <= high) but still *closes* on the trend side ->
+       entry in the trend direction (a pullback-and-hold, not a reversal).
+
+    Only fires on the first bar of each touch (not every bar while price
+    hovers on the average), otherwise a slow chop along the EMA would spam
+    signals. No look-ahead: regime and touch both use only bars up to t.
+    """
+    close, low, high = df["close"], df["low"], df["high"]
+    e = ema(close, window)
+
+    above = close > e
+    cross_up = above & ~above.shift(1).fillna(False)
+    cross_down = (~above) & above.shift(1).fillna(False)
+
+    regime = pd.Series(np.nan, index=df.index)
+    regime[cross_up] = 1
+    regime[cross_down] = -1
+    regime = regime.ffill().fillna(0)
+
+    touches = (low <= e) & (high >= e)
+    touch_long = touches & (regime == 1) & (close > e)
+    touch_short = touches & (regime == -1) & (close < e)
+    new_touch_long = touch_long & ~touch_long.shift(1).fillna(False)
+    new_touch_short = touch_short & ~touch_short.shift(1).fillna(False)
+
+    sig = pd.Series(0, index=df.index)
+    sig[new_touch_long] = 1
+    sig[new_touch_short] = -1
+    return sig
+
+
 STRATEGIES = {
     "trend_pullback": trend_pullback,
     "donchian_breakout": donchian_breakout,
     "rsi_mean_reversion": rsi_mean_reversion,
     "bollinger_reversion": bollinger_reversion,
+    "ema_touch_continuation": ema_touch_continuation,
 }

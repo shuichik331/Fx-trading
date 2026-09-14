@@ -22,6 +22,9 @@
   既存のドンチアン・ブレイクアウトとほぼ同水準（＝新しい優位性ではなく同じ傾向の測り直し）。
   三角保ち合い・フラッグ・ペナント・ウェッジは、自由に動かせるパラメータが多すぎて730日分の
   データでは正直に検証できないため実装していない（理由は `src/chart_patterns.py` 冒頭に記載）。
+- SNSでよく見る「EMA20タッチで順張り」手法も検証したが、**投稿の推奨時間足(ゴールド15分足)ではマイナス
+  (−0.066R)**、最も条件の良い1時間足でも現行の最有力候補に見劣りし、パラメータ頑健性も低い
+  （EMA期間6通り中プラスは2通りのみ）。採用しない。
 
 実運用プラン（1手法のみ・リスク0.5%・実弾投入前の合否ゲート）は `reports/trading_plan.md`。
 `reports/analysis_report.md` は改訂前の初期検証の記録として残してある。
@@ -94,6 +97,7 @@ src/
   montecarlo.py                            # リスク%別の増加確率・最大DD・必要な優位性を試算
   chart_patterns.py                          # H&S・ダブルトップ/ボトムの機械的検出（先読みなし）
   chart_pattern_validation.py                  # 上記パターンを信頼区間・頑健性つきで検証
+  ema_touch_validation.py                        # SNSの「EMA20タッチ」手法を同基準で検証
   signal_scanner.py                  # 旧15分/5分パターンの成立有無＋ファンダメンタルズ状況をチェック
 data/
   insample_20260821/                 # 旧パターン選定時点のデータスナップショット（検証の再現用）
@@ -107,6 +111,8 @@ reports/
   montecarlo_results.csv                     # リスク%別の増加確率・DD確率
   chart_pattern_results.csv                   # 教科書的チャートパターンの検証結果
   chart_pattern_robustness.csv                 # 検出閾値を変えた場合の結果
+  ema_touch_results.csv                         # EMA20タッチ手法の検証結果
+  ema_touch_robustness.csv                       # EMA期間を変えた場合の結果
   analysis_report.md                          # 改訂前の初期検証の記録（結論は上記に置き換え済み）
   backtest_results.csv                         # 全32パターンの生の指標
   cost_adjusted_results.csv                     # スプレッドコスト差引後の実質期待値
