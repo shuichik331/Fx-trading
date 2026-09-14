@@ -27,6 +27,8 @@
   （EMA期間6通り中プラスは2通りのみ）。採用しない。
 
 実運用プラン（1手法のみ・リスク0.5%・実弾投入前の合否ゲート）は `reports/trading_plan.md`。
+この手法をそのまま自動売買化したMT5 EA(ロット自動計算・サーキットブレーカー・ニュースフィルター・
+CSVログ出力つき)は `ea/GoldDonchianBreakout.mq5`（使い方は `ea/README.md`）。
 `reports/analysis_report.md` は改訂前の初期検証の記録として残してある。
 
 **ファンダメンタルズも並行して見る**場合は `src/fundamentals.py`（実質金利・DXYからのマクロ
